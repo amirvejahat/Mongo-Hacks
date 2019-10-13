@@ -1,0 +1,17 @@
+# find data has older than 1 month from this month
+
+  function find_month(date, months) {
+    date.setMonth(date.getMonth() + months);
+    return date;
+  }
+
+  db.connection_log.find({"logout_time" : {$lt: find_month(new Date(), -1)}})
+  
+  # create ttl (expiration date) for 1 month
+  
+  db.connection_log.createIndex(
+   { logout_time: 1 },
+   { expireAfterSeconds: 86400 },
+   { partialFilterExpression: { "logout_time" : {$lt: find_month(new Date(), -1)}}}
+  
+)
